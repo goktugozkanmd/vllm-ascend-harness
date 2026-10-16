@@ -1,0 +1,67 @@
+"""Base model adapter interface.
+
+Defines the contract that all inference backends must implement.
+This is the primary extension point for plugging in new model
+backends (vllm-ascend, vllm, or custom).
+"""
+
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from typing import Any, Iterator
+
+
+@dataclass
+class GenerationRequest:
+    """A single generation request."""
+
+    prompt: str
+    max_tokens: int = 512
+    temperature: float = 1.0
+    top_p: float = 1.0
+    stop: list[str] | None = None
+    metadata: dict | None = None
+
+
+@dataclass
+class GenerationResult:
+    """A single generation result."""
+
+    text: str
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    finish_reason: str = "stop"
+    metadata: dict | None = None
+
+
+class BaseModelAdapter(ABC):
+    """Abstract base class for model backend adapters.
+
+    Extension point: subclass and implement :meth:`generate` (and
+    optionally :meth:`stream`) to integrate a new inference backend.
+    """
+
+    name: str = "base"
+
+    @abstractmethod
+    def generate(self, request: GenerationRequest) -> GenerationResult:
+        """Produce a single completion for *request*."""
+        ...
+
+    def stream(self, request: GenerationRequest) -> Iterator[GenerationResult]:
+        """Stream tokens for *request*.
+
+        TODO: implement streaming support for backends that support it.
+        """
+        raise NotImplementedError("Streaming not supported by this adapter")
+
+    def health_check(self) -> bool:
+        """Return whether the backend is reachable and ready."""
+        # TODO: implement backend health probe
+        return True
+
+    def close(self) -> None:
+        """Release backend resources."""
+        # TODO: implement cleanup
+        pass
