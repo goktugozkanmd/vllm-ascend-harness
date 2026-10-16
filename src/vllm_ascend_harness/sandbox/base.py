@@ -46,7 +46,7 @@ class BaseSandbox(ABC):
         """Destroy the sandbox environment."""
         ...
 
-    def __enter__(self) -> "BaseSandbox":
+    def __enter__(self) -> BaseSandbox:
         self.setup()
         return self
 

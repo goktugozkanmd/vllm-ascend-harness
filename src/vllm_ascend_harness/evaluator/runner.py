@@ -63,13 +63,14 @@ class EvalRunner:
         TODO: add parallel execution, retry, and checkpointing.
         """
         results: list[EvalResult] = []
+        total_score = 0.0
         for task in tasks:
             request = GenerationRequest(prompt=task.prompt)
             gen_result = self.adapter.generate(request)
             score = 0.0
             if self.scorer is not None:
-                # TODO: call scorer.score(task, gen_result)
-                pass
+                score = self.scorer.score(task, gen_result.text)
+            total_score += score
             results.append(
                 EvalResult(
                     task_id=task.task_id,
@@ -77,5 +78,5 @@ class EvalRunner:
                     score=score,
                 )
             )
-        # TODO: compute aggregate score
-        return EvalReport(results=results)
+        aggregate = total_score / len(results) if results else 0.0
+        return EvalReport(results=results, aggregate_score=aggregate)

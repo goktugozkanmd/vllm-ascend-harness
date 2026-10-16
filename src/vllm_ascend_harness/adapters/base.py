@@ -8,8 +8,8 @@ backends (vllm-ascend, vllm, or custom).
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Iterator
 from dataclasses import dataclass
-from typing import Any, Iterator
 
 
 @dataclass
@@ -62,6 +62,8 @@ class BaseModelAdapter(ABC):
         return True
 
     def close(self) -> None:
-        """Release backend resources."""
-        # TODO: implement cleanup
-        pass
+        """Release backend resources.
+
+        Override in subclasses that hold resources (engines, sockets).
+        """
+        return None

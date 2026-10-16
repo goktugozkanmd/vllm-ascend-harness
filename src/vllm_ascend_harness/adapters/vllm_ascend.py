@@ -6,7 +6,7 @@ to satisfy the :class:`BaseModelAdapter` contract for Ascend NPU.
 
 from __future__ import annotations
 
-from typing import Iterator
+from collections.abc import Iterator
 
 from vllm_ascend_harness.adapters.base import (
     BaseModelAdapter,
