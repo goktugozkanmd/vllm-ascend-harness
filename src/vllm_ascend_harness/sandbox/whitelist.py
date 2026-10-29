@@ -132,7 +132,6 @@ class CommandWhitelist:
             segments.append(current)
         return segments
 
-
     @classmethod
     def from_dict(cls, config: dict[str, Any]) -> CommandWhitelist:
         """Build a whitelist from a config dict.
